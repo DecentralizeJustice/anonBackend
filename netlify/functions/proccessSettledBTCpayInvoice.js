@@ -7,19 +7,16 @@ const { MongoClient, ServerApiVersion } = require('mongodb')
 const uri = "mongodb+srv://main:" + mongoDBPassword + "@"+ mongoServerLocation + "/?retryWrites=true&w=majority"
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 // const webhookKey = process.env.BTCWebhookKey
-const storeAddress = 'https://btcpay.anonshop.app/api/v1/stores/' + BTCpayStore + '/invoices'
+const storeAddress = 'https://btcpay.anonshop.app/api/v1/stores/' + BTCpayStore + '/invoices/'
 exports.handler = async (event) => {
 
     try {
       const params = JSON.parse(event.body)
       console.log(params)
       const invoiceId = params.invoiceId
-      console.log(invoiceId)
-      // console.log(event.body)
-      console.log(invoiceId)
-      console.log(storeAddress + invoiceId + `/payment-methods`)
-/*       const response = await axios.get(
-        storeAddress + '/' + invoiceId + `/payment-methods`,
+      if(params.type !== 'InvoiceSettled'){ return {statusCode: 200, body: '' }}
+      const response = await axios.get(
+        storeAddress + invoiceId + `/payment-methods`,
         {
             headers: {
                 'Content-Type': 'application/json',
@@ -27,9 +24,9 @@ exports.handler = async (event) => {
             }
         }
     ) 
-    console.log(response.data) */
+    console.log(response.data)
       return {
-        statusCode: 500,
+        statusCode: 200,
         body: ''
       }
       /* const collection = client.db("accounts").collection("accountInfo")
