@@ -30,8 +30,7 @@ exports.handler = async (event) => {
         statusCode: 500,
         body: ''
       }
-      const collection = client.db("accounts").collection("accountInfo")
-      const params = event.body
+      /* const collection = client.db("accounts").collection("accountInfo")
       const parsed = JSON.parse(params)
       const numberArray = parsed.metadata.numberArray.toString()
       const query = { passphrase: numberArray }
@@ -101,7 +100,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 200,
       body: ''
-    }
+    } */
     } catch (error) {
       console.log(error)
       return {
