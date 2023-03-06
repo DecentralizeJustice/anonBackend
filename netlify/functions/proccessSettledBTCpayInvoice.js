@@ -1,12 +1,13 @@
-/* const BTCpayKey = process.env.BTCpayKey
-const BTCpayStore = process.env.BTCpayStore
-const axios = require("axios") */
+const BTCpayKey = process.env.BTCpayKey
+const BTCpayStore = process.env.BTCpayStore 
+const axios = require("axios")
 const mongoDBPassword = process.env.mongoDBPassword
 const mongoServerLocation = process.env.mongoServerLocation
 const { MongoClient, ServerApiVersion } = require('mongodb')
 const uri = "mongodb+srv://main:" + mongoDBPassword + "@"+ mongoServerLocation + "/?retryWrites=true&w=majority"
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 // const webhookKey = process.env.BTCWebhookKey
+const storeAddress = 'https://btcpay.anonshop.app/api/v1/stores/' + BTCpayStore + '/invoices'
 exports.handler = async (event) => {
 
     try {
@@ -14,6 +15,17 @@ exports.handler = async (event) => {
       const invoiceId = params.invoiceId
       console.log(event.body)
       console.log(invoiceId)
+      console.log(storeAddress + invoiceId + `/payment-methods`)
+      const response = await axios.get(
+        storeAddress + invoiceId + `/payment-methods`,
+        {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': BTCpayKey
+            }
+        }
+    ) 
+    console.log(response)
       return {
         statusCode: 500,
         body: ''
