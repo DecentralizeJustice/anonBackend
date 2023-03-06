@@ -11,7 +11,7 @@ const storeAddress = 'https://btcpay.anonshop.app/api/v1/stores/' + BTCpayStore 
 exports.handler = async (event) => {
 
     try {
-      const params = event.body
+      const params = JSON.parse(event.body)
       console.log(params)
       const invoiceId = params.invoiceId
       console.log(invoiceId)
