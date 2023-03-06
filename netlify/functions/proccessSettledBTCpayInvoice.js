@@ -13,11 +13,12 @@ exports.handler = async (event) => {
     try {
       const params = event.body
       const invoiceId = params.invoiceId
+      console.log(invoiceId)
       console.log(event.body)
       console.log(invoiceId)
       console.log(storeAddress + invoiceId + `/payment-methods`)
       const response = await axios.get(
-        storeAddress + invoiceId + `/payment-methods`,
+        storeAddress + '/' + invoiceId + `/payment-methods`,
         {
             headers: {
                 'Content-Type': 'application/json',
@@ -25,7 +26,7 @@ exports.handler = async (event) => {
             }
         }
     ) 
-    console.log(response)
+    console.log(response.data)
       return {
         statusCode: 500,
         body: ''
