@@ -10,7 +10,10 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 exports.handler = async (event) => {
 
     try {
+      const params = event.body
+      const invoiceId = params.invoiceId
       console.log(event.body)
+      console.log(invoiceId)
       return {
         statusCode: 500,
         body: ''
