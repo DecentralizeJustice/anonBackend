@@ -14,10 +14,10 @@ exports.handler = async (event) => {
       const params = event.body
       const invoiceId = params.invoiceId
       console.log(invoiceId)
-      console.log(event.body)
+      // console.log(event.body)
       console.log(invoiceId)
       console.log(storeAddress + invoiceId + `/payment-methods`)
-      const response = await axios.get(
+/*       const response = await axios.get(
         storeAddress + '/' + invoiceId + `/payment-methods`,
         {
             headers: {
@@ -26,7 +26,7 @@ exports.handler = async (event) => {
             }
         }
     ) 
-    console.log(response.data)
+    console.log(response.data) */
       return {
         statusCode: 500,
         body: ''
