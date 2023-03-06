@@ -12,6 +12,7 @@ exports.handler = async (event) => {
 
     try {
       const params = event.body
+      console.log(params)
       const invoiceId = params.invoiceId
       console.log(invoiceId)
       // console.log(event.body)
