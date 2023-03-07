@@ -13,7 +13,10 @@ exports.handler = async (event) => {
     try {
       const params = JSON.parse(event.body)
       const invoiceId = params.invoiceId
-      if(params.type !== 'InvoiceSettled'){ return {statusCode: 200, body: '' }}
+      if(params.type !== 'InvoiceSettled'){ 
+        await client.close()
+        return {statusCode: 200, body: '' }
+      }
       const response = await axios.get(
         storeAddress + invoiceId + `/payment-methods`,
         {
@@ -32,6 +35,7 @@ exports.handler = async (event) => {
     const exist = await collection.findOne(query)
     if(exist !== null){ 
       return {
+        await client.close()
         statusCode: 409,
         body: JSON.stringify({ error: 'account already exist' })
       }
