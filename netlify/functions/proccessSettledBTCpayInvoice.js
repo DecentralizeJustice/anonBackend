@@ -65,7 +65,7 @@ exports.handler = async (event) => {
         email: null,
         bondAmount: (Number(parsed.metadata.bondUSD)/Number(paymentInfo[0].rate)).toFixed(13),
         refundAddress: parsed.metadata.refundAddress,
-        lockerOrdersCompleted: 0
+        lockerShoppingOrdersCompleted: 0
       },
       orders: [
         orderInfo
