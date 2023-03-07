@@ -24,6 +24,7 @@ exports.handler = async (event) => {
         }
     ) 
     const paymentInfo = response.data
+    console.log(paymentInfo)
     const collection = client.db("accounts").collection("accountInfo")
     const parsed = params
     const numberArray = parsed.metadata.numberArray.toString()
@@ -57,15 +58,13 @@ exports.handler = async (event) => {
       discountPossible: parsed.metadata.discountPossible,
       nickName: hri.random()
     }
-    console.log(orderInfo)
     const docInfo = { 
       passphrase: numberArray, 
       metaData: { 
         email: null,
         bondAmount: parsed.metadata.bondUSD,
         refundAddress: parsed.metadata.refundAddress,
-        shoppingOrdersCompleted: 0,
-        earningOrdersCompleted: 0
+        lockerOrdersCompleted: 0
       },
       orders: [
         orderInfo
