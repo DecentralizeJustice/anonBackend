@@ -27,7 +27,7 @@ exports.handler = async (event) => {
     ) 
     const paymentInfo = response.data
       const collection = client.db("accounts").collection("accountInfo")
-      const parsed = JSON.parse(params)
+      const parsed = params
       const numberArray = parsed.metadata.numberArray.toString()
       const query = { passphrase: numberArray }
       const exist = await collection.findOne(query)
