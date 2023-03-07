@@ -27,7 +27,6 @@ exports.handler = async (event) => {
         }
     ) 
     const paymentInfo = response.data
-    console.log(paymentInfo)
     const collection = client.db("accounts").collection("accountInfo")
     const parsed = params
     const numberArray = parsed.metadata.numberArray.toString()
