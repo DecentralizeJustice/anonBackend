@@ -13,8 +13,8 @@ exports.handler = async (event) => {
     try {
       const params = JSON.parse(event.body)
       const invoiceId = params.invoiceId
-      if(params.type !== 'InvoiceSettled'){ 
-        await client.close()
+      if(params.type !== 'InvoiceSettled'){
+        await client.close() 
         return {statusCode: 200, body: '' }
       }
       const response = await axios.get(
@@ -33,9 +33,9 @@ exports.handler = async (event) => {
     const numberArray = parsed.metadata.numberArray.toString()
     const query = { passphrase: numberArray }
     const exist = await collection.findOne(query)
-    if(exist !== null){ 
+    if(exist !== null){
+      await client.close()
       return {
-        await client.close()
         statusCode: 409,
         body: JSON.stringify({ error: 'account already exist' })
       }
