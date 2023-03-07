@@ -7,10 +7,9 @@ const { MongoClient, ServerApiVersion } = require('mongodb')
 const crypto = require('crypto');
 const hri = require('human-readable-ids').hri
 const uri = "mongodb+srv://main:" + mongoDBPassword + "@"+ mongoServerLocation + "/?retryWrites=true&w=majority"
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 })
 const storeAddress = 'https://btcpay.anonshop.app/api/v1/stores/' + BTCpayStore + '/invoices/'
 exports.handler = async (event) => {
-
+  const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 })
     try {
       const params = JSON.parse(event.body)
       const invoiceId = params.invoiceId
@@ -81,6 +80,7 @@ exports.handler = async (event) => {
     }
     } catch (error) {
       console.log(error)
+      await client.close()
       return {
         statusCode: 500,
         body: ''
