@@ -35,10 +35,8 @@ exports.handler = async (event) => {
     const exist = await collection.findOne(query)
     if(exist !== null){
       await client.close()
-      return {
-        statusCode: 409,
-        body: JSON.stringify({ error: 'account already exist' })
-      }
+      console.log('error: "account already exist"')
+      return {statusCode: 200, body: '' }
     }
     const orderInfo = {
       chatID: crypto.createHash('sha256').update(invoiceId).digest('hex'),
