@@ -38,11 +38,12 @@ exports.handler = async (event) => {
         }
       }
       const orderInfo = {
+        chatID: crypto.createHash('sha256').update(invoiceId).digest('hex'),
+        statusHistory: [  { status :"pending approval" , timeStamp: Date.now() } ],
         paymentInfo: paymentInfo,
         btcPayInvoice: invoiceId,
-        nickName: hri.random(),
-        chatID: crypto.createHash('sha256').update(invoiceId).digest('hex'),
         itemList: parsed.metadata.itemList,
+        country: parsed.metaData.country,
         lockerZipcode: parsed.metadata.lockerZipcode,
         lockerName: parsed.metadata.lockerName,
         extraNotes: parsed.metadata.extraNotes,
@@ -56,18 +57,20 @@ exports.handler = async (event) => {
         refundAddress: parsed.metadata.refundAddress,
         discountPercent: parsed.metadata.discountPercent,
         discountPossible: parsed.metadata.discountPossible,
-        statusHistory: [  { status :"pending approval" , timeStamp: Date.now() } ]
+        nickName: hri.random()
       }
       const doc = { 
         passphrase: numberArray, 
         metaData: { 
           email: null,
           bondAmount: parsed.metadata.bondUSD,
-          refundAddress: parsed.metadata.refundAddress
+          refundAddress: parsed.metadata.refundAddress,
+          shoppingOrdersCompleted: 0,
+          earningOrdersCompleted: 0
         },
         orders: [
           orderInfo
-        ] ,
+        ],
       }
       await collection.insertOne(doc)
       client.close()
