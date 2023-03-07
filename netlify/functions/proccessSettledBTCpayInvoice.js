@@ -13,7 +13,6 @@ exports.handler = async (event) => {
 
     try {
       const params = JSON.parse(event.body)
-      console.log(params)
       const invoiceId = params.invoiceId
       if(params.type !== 'InvoiceSettled'){ return {statusCode: 200, body: '' }}
       const response = await axios.get(
@@ -59,7 +58,8 @@ exports.handler = async (event) => {
       discountPossible: parsed.metadata.discountPossible,
       nickName: hri.random()
     }
-    const doc = { 
+    console.log(orderInfo)
+    const docInfo = { 
       passphrase: numberArray, 
       metaData: { 
         email: null,
@@ -72,6 +72,7 @@ exports.handler = async (event) => {
         orderInfo
       ],
     }
+    const doc = docInfo
     await collection.insertOne(doc)
     client.close()
     return {
