@@ -74,7 +74,7 @@ exports.handler = async (event) => {
     }
     const doc = docInfo
     await collection.insertOne(doc)
-    client.close()
+    await client.close()
     return {
       statusCode: 200,
       body: ''
