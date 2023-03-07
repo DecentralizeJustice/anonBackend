@@ -26,54 +26,54 @@ exports.handler = async (event) => {
         }
     ) 
     const paymentInfo = response.data
-      const collection = client.db("accounts").collection("accountInfo")
-      const parsed = params
-      const numberArray = parsed.metadata.numberArray.toString()
-      const query = { passphrase: numberArray }
-      const exist = await collection.findOne(query)
-      if(exist !== null){ 
-        return {
-          statusCode: 409,
-          body: JSON.stringify({ error: 'account already exist' })
-        }
+    const collection = client.db("accounts").collection("accountInfo")
+    const parsed = params
+    const numberArray = parsed.metadata.numberArray.toString()
+    const query = { passphrase: numberArray }
+    const exist = await collection.findOne(query)
+    if(exist !== null){ 
+      return {
+        statusCode: 409,
+        body: JSON.stringify({ error: 'account already exist' })
       }
-      const orderInfo = {
-        chatID: crypto.createHash('sha256').update(invoiceId).digest('hex'),
-        statusHistory: [  { status :"pending approval" , timeStamp: Date.now() } ],
-        paymentInfo: paymentInfo,
-        btcPayInvoice: invoiceId,
-        itemList: parsed.metadata.itemList,
-        country: parsed.metaData.country,
-        lockerZipcode: parsed.metadata.lockerZipcode,
-        lockerName: parsed.metadata.lockerName,
-        extraNotes: parsed.metadata.extraNotes,
-        type: parsed.metadata.type,
-        totalUSD: parsed.metadata.amount,
-        taxAmountUSD: parsed.metadata.taxAmount,
-        itemsSubtotal: parsed.metadata.orderSubtotal,
-        bondUSD: parsed.metadata.bondUSD,
-        orderFeeUSD: parsed.metadata.serviceFeeUSD,
-        extraAmountUSD: parsed.metadata.extraAmountUSD,
+    }
+    const orderInfo = {
+      chatID: crypto.createHash('sha256').update(invoiceId).digest('hex'),
+      statusHistory: [  { status :"pending approval" , timeStamp: Date.now() } ],
+      paymentInfo: paymentInfo,
+      btcPayInvoice: invoiceId,
+      itemList: parsed.metadata.itemList,
+      country: parsed.metadata.country,
+      lockerZipcode: parsed.metadata.lockerZipcode,
+      lockerName: parsed.metadata.lockerName,
+      extraNotes: parsed.metadata.extraNotes,
+      type: parsed.metadata.type,
+      totalUSD: parsed.metadata.amount,
+      taxAmountUSD: parsed.metadata.taxAmount,
+      itemsSubtotal: parsed.metadata.orderSubtotal,
+      bondUSD: parsed.metadata.bondUSD,
+      orderFeeUSD: parsed.metadata.serviceFeeUSD,
+      extraAmountUSD: parsed.metadata.extraAmountUSD,
+      refundAddress: parsed.metadata.refundAddress,
+      discountPercent: parsed.metadata.discountPercent,
+      discountPossible: parsed.metadata.discountPossible,
+      nickName: hri.random()
+    }
+    const doc = { 
+      passphrase: numberArray, 
+      metaData: { 
+        email: null,
+        bondAmount: parsed.metadata.bondUSD,
         refundAddress: parsed.metadata.refundAddress,
-        discountPercent: parsed.metadata.discountPercent,
-        discountPossible: parsed.metadata.discountPossible,
-        nickName: hri.random()
-      }
-      const doc = { 
-        passphrase: numberArray, 
-        metaData: { 
-          email: null,
-          bondAmount: parsed.metadata.bondUSD,
-          refundAddress: parsed.metadata.refundAddress,
-          shoppingOrdersCompleted: 0,
-          earningOrdersCompleted: 0
-        },
-        orders: [
-          orderInfo
-        ],
-      }
-      await collection.insertOne(doc)
-      client.close()
+        shoppingOrdersCompleted: 0,
+        earningOrdersCompleted: 0
+      },
+      orders: [
+        orderInfo
+      ],
+    }
+    await collection.insertOne(doc)
+    client.close()
     return {
       statusCode: 200,
       body: ''
