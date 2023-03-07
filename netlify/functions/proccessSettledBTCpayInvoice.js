@@ -4,9 +4,10 @@ const axios = require("axios")
 const mongoDBPassword = process.env.mongoDBPassword
 const mongoServerLocation = process.env.mongoServerLocation
 const { MongoClient, ServerApiVersion } = require('mongodb')
+const crypto = require('crypto');
+const hri = require('human-readable-ids').hri
 const uri = "mongodb+srv://main:" + mongoDBPassword + "@"+ mongoServerLocation + "/?retryWrites=true&w=majority"
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
-// const webhookKey = process.env.BTCWebhookKey
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 })
 const storeAddress = 'https://btcpay.anonshop.app/api/v1/stores/' + BTCpayStore + '/invoices/'
 exports.handler = async (event) => {
 
@@ -24,12 +25,8 @@ exports.handler = async (event) => {
             }
         }
     ) 
-    console.log(response.data)
-      return {
-        statusCode: 200,
-        body: ''
-      }
-      /* const collection = client.db("accounts").collection("accountInfo")
+    const paymentInfo = response.data
+      const collection = client.db("accounts").collection("accountInfo")
       const parsed = JSON.parse(params)
       const numberArray = parsed.metadata.numberArray.toString()
       const query = { passphrase: numberArray }
@@ -41,54 +38,32 @@ exports.handler = async (event) => {
         }
       }
       const orderInfo = {
-        paymentInfo: [
-          {
-            "activated": true,
-            "destination": "82YPMFzrSf1HSwUtK4DYnrTuink8cMVAzUooEY3Aedor8fjhgxikAgvfCRgjDCm4n6JCNGJBqGZcK7hy9rUSRcP5Td5y8vQ",
-            "paymentLink": "monero:82YPMFzrSf1HSwUtK4DYnrTuink8cMVAzUooEY3Aedor8fjhgxikAgvfCRgjDCm4n6JCNGJBqGZcK7hy9rUSRcP5Td5y8vQ?tx_amount=0",
-            "rate": "0.006537",
-            "paymentMethodPaid": "0.00015297",
-            "totalPaid": "0.00015297",
-            "due": "0",
-            "amount": "0.00015297",
-            "networkFee": "0",
-            "payments": [
-              {
-                "id": "5ed3a4b1afcbb2276e01c2197aadc1952716cc3c824981e0ce284376d32ac44e#0#104",
-                "receivedDate": 1676932475,
-                "value": "0.000152970000",
-                "fee": "0.0000000019",
-                "status": "Settled",
-                "destination": "8BvH5aT2EEvQ9S2jCueoXn7rab9onCYcN7vSho2HQWvXJZ9mQMeFWeKXcjXMstFjW7CsWxbB6fscmjJeypy3QHQwJviJnBU"
-              }
-            ],
-            "paymentMethod": "XMR",
-            "cryptoCode": "XMR",
-            "additionalData": {}
-          }
-        ],
-        btcPayInvoice: 'fasdfadfa', // need to add
-        nickName: 'tall chair',
-        chatID: 'djlfkgj;lsdgfjjg;',
+        paymentInfo: paymentInfo,
+        btcPayInvoice: invoiceId,
+        nickName: hri.random(),
+        chatID: crypto.createHash('sha256').update(invoiceId).digest('hex'),
         itemList: parsed.metadata.itemList,
         lockerZipcode: parsed.metadata.lockerZipcode,
         lockerName: parsed.metadata.lockerName,
         extraNotes: parsed.metadata.extraNotes,
         type: parsed.metadata.type,
-        totalSentUSD: parsed.metadata.totalSentUSD,
-        taxAmountUSD: parsed.metadata.taxAmountUSD,
-        itemsSubtotal: parsed.metadata.itemsSubtotal,
+        totalUSD: parsed.metadata.amount,
+        taxAmountUSD: parsed.metadata.taxAmount,
+        itemsSubtotal: parsed.metadata.orderSubtotal,
         bondUSD: parsed.metadata.bondUSD,
-        orderFeeUSD: parsed.metadata.orderFeeUSD,
+        orderFeeUSD: parsed.metadata.serviceFeeUSD,
         extraAmountUSD: parsed.metadata.extraAmountUSD,
+        refundAddress: parsed.metadata.refundAddress,
+        discountPercent: parsed.metadata.discountPercent,
+        discountPossible: parsed.metadata.discountPossible,
         statusHistory: [  { status :"pending approval" , timeStamp: Date.now() } ]
       }
       const doc = { 
         passphrase: numberArray, 
         metaData: { 
           email: null,
-          bondAmount: 1,
-          refundAddress: "testinginfo" 
+          bondAmount: parsed.metadata.bondUSD,
+          refundAddress: parsed.metadata.refundAddress
         },
         orders: [
           orderInfo
@@ -99,7 +74,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 200,
       body: ''
-    } */
+    }
     } catch (error) {
       console.log(error)
       return {
