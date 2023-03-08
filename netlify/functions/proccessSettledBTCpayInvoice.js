@@ -27,17 +27,8 @@ exports.handler = async (event) => {
         }
     ) 
     const paymentInfo = response.data
-    const collection = client.db("accounts").collection("accountInfo")
-    const parsed = params
-    const numberArray = parsed.metadata.numberArray.toString()
-    const query = { passphrase: numberArray }
-    const exist = await collection.findOne(query)
-    if(exist !== null){
-      await client.close()
-      console.log('error: "account already exist"')
-      return {statusCode: 200, body: '' }
-    }
-    await processFirstLockerOrder(numberArray, paymentInfo, invoiceId, parsed, collection)
+    
+    await processFirstLockerOrder(paymentInfo, invoiceId, params, client)
     await client.close()
     return {
       statusCode: 200,
@@ -55,7 +46,17 @@ exports.handler = async (event) => {
 }
 
 
-async function processFirstLockerOrder(numberArray, paymentInfo, invoiceId, parsed, collection){
+async function processFirstLockerOrder(paymentInfo, invoiceId, params, client){
+  const collection = client.db("accounts").collection("accountInfo")
+    const parsed = params
+    const numberArray = parsed.metadata.numberArray.toString()
+    const query = { passphrase: numberArray }
+    const exist = await collection.findOne(query)
+    if(exist !== null){
+      await client.close()
+      console.log('error: "account already exist"')
+      return {statusCode: 200, body: '' }
+    }
   const randomString = crypto.randomBytes(16).toString('hex')
   const orderInfo = {
     chatID: crypto.createHash('sha256').update(randomString).digest('hex'),
