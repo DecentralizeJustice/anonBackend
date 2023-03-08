@@ -37,43 +37,7 @@ exports.handler = async (event) => {
       console.log('error: "account already exist"')
       return {statusCode: 200, body: '' }
     }
-    const randomString = crypto.randomBytes(16).toString('hex')
-    const orderInfo = {
-      chatID: crypto.createHash('sha256').update(randomString).digest('hex'),
-      statusHistory: [  { status :"pending approval" , timeStamp: Date.now() } ],
-      paymentInfo: paymentInfo,
-      btcPayInvoice: invoiceId,
-      itemList: parsed.metadata.itemList,
-      country: parsed.metadata.country,
-      lockerZipcode: parsed.metadata.lockerZipcode,
-      lockerName: parsed.metadata.lockerName,
-      extraNotes: parsed.metadata.extraNotes,
-      type: parsed.metadata.type,
-      totalUSD: parsed.metadata.amount,
-      taxAmountUSD: parsed.metadata.taxAmount,
-      itemsSubtotal: parsed.metadata.orderSubtotal,
-      bondUSD: parsed.metadata.bondUSD,
-      orderFeeUSD: parsed.metadata.serviceFeeUSD,
-      extraAmountUSD: parsed.metadata.extraAmountUSD,
-      refundAddress: parsed.metadata.refundAddress,
-      discountPercent: parsed.metadata.discountPercent,
-      discountPossible: parsed.metadata.discountPossible,
-      nickName: hri.random()
-    }
-    const docInfo = { 
-      passphrase: numberArray, 
-      metaData: { 
-        email: null,
-        bondAmount: (Number(parsed.metadata.bondUSD)/Number(paymentInfo[0].rate)).toFixed(13),
-        refundAddress: parsed.metadata.refundAddress,
-        lockerShoppingOrdersCompleted: 0
-      },
-      orders: [
-        orderInfo
-      ],
-    }
-    const doc = docInfo
-    await collection.insertOne(doc)
+    await processFirstLockerOrder(numberArray, paymentInfo, invoiceId, parsed, collection)
     await client.close()
     return {
       statusCode: 200,
@@ -88,4 +52,45 @@ exports.handler = async (event) => {
       }
     }
 
+}
+
+
+async function processFirstLockerOrder(numberArray, paymentInfo, invoiceId, parsed, collection){
+  const randomString = crypto.randomBytes(16).toString('hex')
+  const orderInfo = {
+    chatID: crypto.createHash('sha256').update(randomString).digest('hex'),
+    statusHistory: [  { status :"Pending Approval" , timeStamp: Date.now() } ],
+    paymentInfo: paymentInfo,
+    btcPayInvoice: invoiceId,
+    itemList: parsed.metadata.itemList,
+    country: parsed.metadata.country,
+    lockerZipcode: parsed.metadata.lockerZipcode,
+    lockerName: parsed.metadata.lockerName,
+    extraNotes: parsed.metadata.extraNotes,
+    type: parsed.metadata.type,
+    totalUSD: parsed.metadata.amount,
+    taxAmountUSD: parsed.metadata.taxAmount,
+    itemsSubtotal: parsed.metadata.orderSubtotal,
+    bondUSD: parsed.metadata.bondUSD,
+    orderFeeUSD: parsed.metadata.serviceFeeUSD,
+    extraAmountUSD: parsed.metadata.extraAmountUSD,
+    refundAddress: parsed.metadata.refundAddress,
+    discountPercent: parsed.metadata.discountPercent,
+    discountPossible: parsed.metadata.discountPossible,
+    nickName: hri.random()
+  }
+  const docInfo = { 
+    passphrase: numberArray, 
+    metaData: { 
+      email: null,
+      bondAmount: (Number(parsed.metadata.bondUSD)/Number(paymentInfo[0].rate)).toFixed(13),
+      refundAddress: parsed.metadata.refundAddress,
+      lockerShoppingOrdersCompleted: 0
+    },
+    orders: [
+      orderInfo
+    ],
+  }
+  const doc = docInfo
+  await collection.insertOne(doc)
 }
