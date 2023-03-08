@@ -31,6 +31,9 @@ exports.handler = async (event) => {
       case 'firstLockerOrder':
         await processFirstLockerOrder(paymentInfo, invoiceId, params, client)
         break;
+      case 'firstAddressOrder':
+        await processFirstAddressOrder(paymentInfo, invoiceId, params, client)
+        break;
       default:
         console.log(`No order type matched.`);
     }
@@ -50,7 +53,9 @@ exports.handler = async (event) => {
     }
 
 }
-
+async function processFirstAddressOrder(){
+  console.log('ran')
+}
 
 async function processFirstLockerOrder(paymentInfo, invoiceId, params, client){
   const collection = client.db("accounts").collection("accountInfo")
