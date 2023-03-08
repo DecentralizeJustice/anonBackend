@@ -53,8 +53,57 @@ exports.handler = async (event) => {
     }
 
 }
-async function processFirstAddressOrder(){
-  console.log('ran')
+async function processFirstAddressOrder(paymentInfo, invoiceId, params, client){
+  const collection = client.db("accounts").collection("accountInfo")
+  const numberArray = params.metadata.numberArray.toString()
+  const query = { passphrase: numberArray }
+  const exist = await collection.findOne(query)
+  if(exist !== null){
+    await client.close()
+    console.log('error: "account already exist"')
+    return {statusCode: 200, body: '' }
+  }
+  const randomString = crypto.randomBytes(16).toString('hex')
+  const orderInfo = {
+    chatID: crypto.createHash('sha256').update(randomString).digest('hex'),
+    statusHistory: [  { status :"Pending Approval" , timeStamp: Date.now() } ],
+    paymentInfo: paymentInfo,
+    btcPayInvoice: invoiceId,
+    addressInfo: {
+      country: params.metadata.addressInfo.country,
+      zipcode: params.metadata.addressInfo.zipcode,
+      city: params.metadata.addressInfo.zipcode,
+      streetAddress: params.metadata.addressInfo.streetAddress,
+      fullname: params.metadata.addressInfo.fullname,
+    },
+    itemList: params.metadata.itemList,
+    extraNotes: params.metadata.extraNotes,
+    type: params.metadata.type,
+    totalUSD: params.metadata.amount,
+    taxAmountUSD: params.metadata.taxAmount,
+    itemsSubtotal: params.metadata.orderSubtotal,
+    bondUSD: params.metadata.bondUSD,
+    orderFeeUSD: params.metadata.serviceFeeUSD,
+    extraAmountUSD: params.metadata.extraAmountUSD,
+    refundAddress: params.metadata.refundAddress,
+    discountPercent: params.metadata.discountPercent,
+    discountPossible: params.metadata.discountPossible,
+    nickName: hri.random()
+  }
+  const docInfo = { 
+    passphrase: numberArray, 
+    metaData: { 
+      email: null,
+      bondAmount: (Number(params.metadata.bondUSD)/Number(paymentInfo[0].rate)).toFixed(13),
+      refundAddress: params.metadata.refundAddress,
+      addressShoppingOrdersCompleted: 0
+    },
+    orders: [
+      orderInfo
+    ],
+  }
+  const doc = docInfo
+  await collection.insertOne(doc)
 }
 
 async function processFirstLockerOrder(paymentInfo, invoiceId, params, client){
