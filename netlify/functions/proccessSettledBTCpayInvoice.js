@@ -27,8 +27,14 @@ exports.handler = async (event) => {
         }
     ) 
     const paymentInfo = response.data
-    
-    await processFirstLockerOrder(paymentInfo, invoiceId, params, client)
+    switch (params.metadata.type) {
+      case 'firstLockerOrder':
+        await processFirstLockerOrder(paymentInfo, invoiceId, params, client)
+        break;
+      default:
+        console.log(`Sorry, we are out of.`);
+    }
+
     await client.close()
     return {
       statusCode: 200,
@@ -48,8 +54,7 @@ exports.handler = async (event) => {
 
 async function processFirstLockerOrder(paymentInfo, invoiceId, params, client){
   const collection = client.db("accounts").collection("accountInfo")
-    const parsed = params
-    const numberArray = parsed.metadata.numberArray.toString()
+    const numberArray = params.metadata.numberArray.toString()
     const query = { passphrase: numberArray }
     const exist = await collection.findOne(query)
     if(exist !== null){
@@ -63,29 +68,29 @@ async function processFirstLockerOrder(paymentInfo, invoiceId, params, client){
     statusHistory: [  { status :"Pending Approval" , timeStamp: Date.now() } ],
     paymentInfo: paymentInfo,
     btcPayInvoice: invoiceId,
-    itemList: parsed.metadata.itemList,
-    country: parsed.metadata.country,
-    lockerZipcode: parsed.metadata.lockerZipcode,
-    lockerName: parsed.metadata.lockerName,
-    extraNotes: parsed.metadata.extraNotes,
-    type: parsed.metadata.type,
-    totalUSD: parsed.metadata.amount,
-    taxAmountUSD: parsed.metadata.taxAmount,
-    itemsSubtotal: parsed.metadata.orderSubtotal,
-    bondUSD: parsed.metadata.bondUSD,
-    orderFeeUSD: parsed.metadata.serviceFeeUSD,
-    extraAmountUSD: parsed.metadata.extraAmountUSD,
-    refundAddress: parsed.metadata.refundAddress,
-    discountPercent: parsed.metadata.discountPercent,
-    discountPossible: parsed.metadata.discountPossible,
+    itemList: params.metadata.itemList,
+    country: params.metadata.country,
+    lockerZipcode: params.metadata.lockerZipcode,
+    lockerName: params.metadata.lockerName,
+    extraNotes: params.metadata.extraNotes,
+    type: params.metadata.type,
+    totalUSD: params.metadata.amount,
+    taxAmountUSD: params.metadata.taxAmount,
+    itemsSubtotal: params.metadata.orderSubtotal,
+    bondUSD: params.metadata.bondUSD,
+    orderFeeUSD: params.metadata.serviceFeeUSD,
+    extraAmountUSD: params.metadata.extraAmountUSD,
+    refundAddress: params.metadata.refundAddress,
+    discountPercent: params.metadata.discountPercent,
+    discountPossible: params.metadata.discountPossible,
     nickName: hri.random()
   }
   const docInfo = { 
     passphrase: numberArray, 
     metaData: { 
       email: null,
-      bondAmount: (Number(parsed.metadata.bondUSD)/Number(paymentInfo[0].rate)).toFixed(13),
-      refundAddress: parsed.metadata.refundAddress,
+      bondAmount: (Number(params.metadata.bondUSD)/Number(paymentInfo[0].rate)).toFixed(13),
+      refundAddress: params.metadata.refundAddress,
       lockerShoppingOrdersCompleted: 0
     },
     orders: [
