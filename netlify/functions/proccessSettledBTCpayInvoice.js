@@ -25,14 +25,14 @@ exports.handler = async (event) => {
                 'Authorization': BTCpayKey
             }
         }
-    ) 
+      ) 
     const paymentInfo = response.data
     switch (params.metadata.type) {
       case 'firstLockerOrder':
         await processFirstLockerOrder(paymentInfo, invoiceId, params, client)
         break;
       default:
-        console.log(`Sorry, we are out of.`);
+        console.log(`No order type matched.`);
     }
 
     await client.close()
@@ -54,14 +54,14 @@ exports.handler = async (event) => {
 
 async function processFirstLockerOrder(paymentInfo, invoiceId, params, client){
   const collection = client.db("accounts").collection("accountInfo")
-    const numberArray = params.metadata.numberArray.toString()
-    const query = { passphrase: numberArray }
-    const exist = await collection.findOne(query)
-    if(exist !== null){
-      await client.close()
-      console.log('error: "account already exist"')
-      return {statusCode: 200, body: '' }
-    }
+  const numberArray = params.metadata.numberArray.toString()
+  const query = { passphrase: numberArray }
+  const exist = await collection.findOne(query)
+  if(exist !== null){
+    await client.close()
+    console.log('error: "account already exist"')
+    return {statusCode: 200, body: '' }
+  }
   const randomString = crypto.randomBytes(16).toString('hex')
   const orderInfo = {
     chatID: crypto.createHash('sha256').update(randomString).digest('hex'),
