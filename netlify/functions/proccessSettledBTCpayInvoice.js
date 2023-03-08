@@ -37,8 +37,9 @@ exports.handler = async (event) => {
       console.log('error: "account already exist"')
       return {statusCode: 200, body: '' }
     }
+    const randomString = crypto.randomInt(0, 10000000000000000).toString()
     const orderInfo = {
-      chatID: crypto.createHash('sha256').update(invoiceId).digest('hex'),
+      chatID: crypto.createHash('sha256').update(randomString).digest('hex'),
       statusHistory: [  { status :"pending approval" , timeStamp: Date.now() } ],
       paymentInfo: paymentInfo,
       btcPayInvoice: invoiceId,
