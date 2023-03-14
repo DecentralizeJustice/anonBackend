@@ -4,6 +4,7 @@ const axios = require("axios")
 const mongoDBPassword = process.env.mongoDBPassword
 const mongoServerLocation = process.env.mongoServerLocation
 const { MongoClient, ServerApiVersion } = require('mongodb')
+const Joi = require("joi")
 const crypto = require('crypto');
 const hri = require('human-readable-ids').hri
 const uri = "mongodb+srv://main:" + mongoDBPassword + "@"+ mongoServerLocation + "/?retryWrites=true&w=majority"
@@ -13,6 +14,8 @@ exports.handler = async (event) => {
     try {
       const params = JSON.parse(event.body)
       const invoiceId = params.invoiceId
+      const invoiceIdschema = Joi.string().required().alphanum().min(22).max(22)
+      await invoiceIdschema.validateAsync(invoiceId)
       if(params.type !== 'InvoiceSettled'){
         await client.close() 
         return {statusCode: 200, body: '' }
@@ -55,6 +58,8 @@ exports.handler = async (event) => {
 }
 async function processFirstAddressOrder(paymentInfo, invoiceId, params, client){
   const collection = client.db("accounts").collection("accountInfo")
+  const numberArraySchema = Joi.array().length(8).items(Joi.number().max(2050).min(0))
+  await numberArraySchema.validateAsync(params.metadata.numberArray)
   const numberArray = params.metadata.numberArray.toString()
   const query = { passphrase: numberArray }
   const exist = await collection.findOne(query)
@@ -90,6 +95,7 @@ async function processFirstAddressOrder(paymentInfo, invoiceId, params, client){
     discountPossible: params.metadata.discountPossible,
     nickName: hri.random()
   }
+  await sanatizeFirstAddressOrderInfo( orderInfo)
   const docInfo = { 
     passphrase: numberArray, 
     metaData: { 
@@ -105,7 +111,29 @@ async function processFirstAddressOrder(paymentInfo, invoiceId, params, client){
   const doc = docInfo
   await collection.insertOne(doc)
 }
-
+async function sanatizeFirstAddressOrderInfo(orderInfo){
+  const addressInfoSchema = Joi.object({
+    country: Joi.string().required().alphanum().min(0).max(99),
+    zipcode: Joi.number().required().min(0).max(999999),
+    city: Joi.string().required().min(0).max(99),
+    streetAddress: Joi.string().required().min(0).max(999),
+    fullname: Joi.string().required().min(0).max(99),
+  })
+  const itemSchema = Joi.object().length(4).keys({
+    link: Joi.number(),
+    description: Joi.string(),
+    cost:Joi.string(),
+    quantity:Joi.string(),
+  })
+  const itemListSchema = Joi.array.min(1).max(20).items(itemSchema)
+  const objectSchema = Joi.object({
+    btcPayInvoice: Joi.string().required().alphanum().length(22),
+    addressInfo: addressInfoSchema,
+    itemList: itemListSchema
+  })
+  await objectSchema.validateAsync(orderInfo)
+  return true
+}
 async function processFirstLockerOrder(paymentInfo, invoiceId, params, client){
   const collection = client.db("accounts").collection("accountInfo")
   const numberArray = params.metadata.numberArray.toString()
