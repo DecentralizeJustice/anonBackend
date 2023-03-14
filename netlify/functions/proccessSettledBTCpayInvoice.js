@@ -127,10 +127,13 @@ async function sanatizeFirstAddressOrderInfo(orderInfo){
   })
   const itemListSchema = Joi.array().required().min(1).max(20).items(itemSchema)
   const objectSchema = Joi.object({
+    chatID: Joi.string().required(),
+    statusHistory: Joi.array().required(),
+    paymentInfo: Joi.array().required(),
     btcPayInvoice: Joi.string().required().alphanum().length(22),
     addressInfo: addressInfoSchema,
     itemList: itemListSchema,
-    extraNotes: Joi.string().min(0).max(99999),
+    extraNotes: Joi.string().required().min(0).max(99999),
     type: Joi.string().required().min(0).max(50),
     totalUSD: Joi.number().required().min(0).max(99999),
     taxAmountUSD: Joi.number().required().min(0).max(99999),
@@ -141,6 +144,7 @@ async function sanatizeFirstAddressOrderInfo(orderInfo){
     refundAddress: Joi.string().required().alphanum().min(1).max(110),
     discountPercent: Joi.number().required().min(0).max(100),
     discountPossible: Joi.boolean().required(),
+    nickName: Joi.string().required()
   })
   await objectSchema.validateAsync(orderInfo)
   return true
