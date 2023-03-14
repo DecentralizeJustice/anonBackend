@@ -121,7 +121,7 @@ async function sanatizeFirstAddressOrderInfo(orderInfo){
   })
   const itemSchema = Joi.object().length(4).keys({
     link: Joi.string().required().min(1).max(99999),
-    description: Joi.string().required().min(1).max(99999),
+    description: Joi.string().min(1).max(99999),
     cost:Joi.number().required().min(0).max(99999),
     quantity:Joi.number().required().min(0).max(99999),
   })
@@ -140,7 +140,7 @@ async function sanatizeFirstAddressOrderInfo(orderInfo){
     extraAmountUSD: Joi.number().required().min(0).max(99999),
     refundAddress: Joi.string().required().alphanum().min(1).max(110),
     discountPercent: Joi.number().required().min(0).max(100),
-    discountPossible: Joi.boolean(),
+    discountPossible: Joi.boolean().required(),
   })
   await objectSchema.validateAsync(orderInfo)
   return true
