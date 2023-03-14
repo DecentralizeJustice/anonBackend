@@ -127,8 +127,8 @@ async function sanatizeFirstAddressOrderInfo(orderInfo){
   })
   const itemListSchema = Joi.array().required().min(1).max(20).items(itemSchema)
   const objectSchema = Joi.object({
-    chatID: Joi.string().required(),
-    statusHistory: Joi.array().required(),
+    chatID: Joi.string().required().hex().max(99999),
+    statusHistory: Joi.array().required().length(1),
     paymentInfo: Joi.array().required(),
     btcPayInvoice: Joi.string().required().alphanum().length(22),
     addressInfo: addressInfoSchema,
@@ -151,6 +151,8 @@ async function sanatizeFirstAddressOrderInfo(orderInfo){
 }
 async function processFirstLockerOrder(paymentInfo, invoiceId, params, client){
   const collection = client.db("accounts").collection("accountInfo")
+  const numberArraySchema = Joi.array().length(8).items(Joi.number().max(2050).min(0))
+  await numberArraySchema.validateAsync(params.metadata.numberArray)
   const numberArray = params.metadata.numberArray.toString()
   const query = { passphrase: numberArray }
   const exist = await collection.findOne(query)
@@ -182,6 +184,7 @@ async function processFirstLockerOrder(paymentInfo, invoiceId, params, client){
     discountPossible: params.metadata.discountPossible,
     nickName: hri.random()
   }
+  await sanatizeFirstLockerOrderInfo(orderInfo)
   const docInfo = { 
     passphrase: numberArray, 
     metaData: { 
@@ -196,4 +199,37 @@ async function processFirstLockerOrder(paymentInfo, invoiceId, params, client){
   }
   const doc = docInfo
   await collection.insertOne(doc)
+}
+async function sanatizeFirstLockerOrderInfo(orderInfo){
+  const itemSchema = Joi.object().length(4).keys({
+    link: Joi.string().required().min(1).max(99999),
+    description: Joi.string().required().min(0).max(99999),
+    cost:Joi.number().required().min(0).max(99999),
+    quantity:Joi.number().required().min(0).max(99999),
+  })
+  const itemListSchema = Joi.array().required().min(1).max(20).items(itemSchema)
+  const objectSchema = Joi.object({
+    chatID: Joi.string().required().hex().max(99999),
+    statusHistory: Joi.array().required().length(1),
+    paymentInfo: Joi.array().required(),
+    btcPayInvoice: Joi.string().required().alphanum().length(22),
+    itemList: itemListSchema,
+    country: Joi.string().required().alphanum().min(0).max(99),
+    lockerZipcode: Joi.number().required().min(0).max(999999),
+    lockerName: Joi.string().required().alphanum().min(0).max(99),
+    extraNotes: Joi.string().required().min(0).max(99999),
+    type: Joi.string().required().min(0).max(50),
+    totalUSD: Joi.number().required().min(0).max(99999),
+    taxAmountUSD: Joi.number().required().min(0).max(99999),
+    itemsSubtotal: Joi.number().required().min(0).max(99999),
+    bondUSD: Joi.number().required().min(0).max(99999),
+    orderFeeUSD: Joi.number().required().min(0).max(99999),
+    extraAmountUSD: Joi.number().required().min(0).max(99999),
+    refundAddress: Joi.string().required().alphanum().min(1).max(110),
+    discountPercent: Joi.number().required().min(0).max(100),
+    discountPossible: Joi.boolean().required(),
+    nickName: Joi.string().required()
+  })
+  await objectSchema.validateAsync(orderInfo)
+  return true
 }
