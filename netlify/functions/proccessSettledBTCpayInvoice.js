@@ -121,7 +121,7 @@ async function sanatizeFirstAddressOrderInfo(orderInfo){
   })
   const itemSchema = Joi.object().length(4).keys({
     link: Joi.string().required().min(1).max(99999),
-    description: Joi.string().min(0).max(99999),
+    description: Joi.string().required().min(0).max(99999),
     cost:Joi.number().required().min(0).max(99999),
     quantity:Joi.number().required().min(0).max(99999),
   })
