@@ -95,7 +95,7 @@ async function processFirstAddressOrder(paymentInfo, invoiceId, params, client){
     discountPossible: params.metadata.discountPossible,
     nickName: hri.random()
   }
-  await sanatizeFirstAddressOrderInfo( orderInfo)
+  await sanatizeFirstAddressOrderInfo(orderInfo)
   const docInfo = { 
     passphrase: numberArray, 
     metaData: { 
@@ -120,16 +120,27 @@ async function sanatizeFirstAddressOrderInfo(orderInfo){
     fullname: Joi.string().required().min(0).max(99),
   })
   const itemSchema = Joi.object().length(4).keys({
-    link: Joi.number(),
-    description: Joi.string(),
-    cost:Joi.string(),
-    quantity:Joi.string(),
+    link: Joi.string().required().min(1).max(99999),
+    description: Joi.string().required().min(1).max(99999),
+    cost:Joi.number().required().min(0).max(99999),
+    quantity:Joi.number().required().min(0).max(99999),
   })
-  const itemListSchema = Joi.array.min(1).max(20).items(itemSchema)
+  const itemListSchema = Joi.array.required().min(1).max(20).items(itemSchema)
   const objectSchema = Joi.object({
     btcPayInvoice: Joi.string().required().alphanum().length(22),
     addressInfo: addressInfoSchema,
-    itemList: itemListSchema
+    itemList: itemListSchema,
+    extraNotes: Joi.string().min(0).max(99999),
+    type: Joi.string().required().min(0).max(50),
+    totalUSD: Joi.number().required().min(0).max(99999),
+    taxAmountUSD: Joi.number().required().min(0).max(99999),
+    itemsSubtotal: Joi.number().required().min(0).max(99999),
+    bondUSD: Joi.number().required().min(0).max(99999),
+    orderFeeUSD: Joi.number().required().min(0).max(99999),
+    extraAmountUSD: Joi.number().required().min(0).max(99999),
+    refundAddress: Joi.string().required().alphanum().min(1).max(110),
+    discountPercent: Joi.number().required().min(0).max(100),
+    discountPossible: Joi.boolean(),
   })
   await objectSchema.validateAsync(orderInfo)
   return true
