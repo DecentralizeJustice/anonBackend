@@ -13,9 +13,11 @@ exports.handler = async (event) => {
   const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 })
     try {
       const params = JSON.parse(event.body)
+
       const invoiceId = params.invoiceId
       const invoiceIdschema = Joi.string().required().alphanum().min(22).max(22)
       await invoiceIdschema.validateAsync(invoiceId)
+
       if(params.type !== 'InvoiceSettled'){
         await client.close() 
         return {statusCode: 200, body: '' }
@@ -58,9 +60,11 @@ exports.handler = async (event) => {
 }
 async function processFirstAddressOrder(paymentInfo, invoiceId, params, client){
   const collection = client.db("accounts").collection("accountInfo")
+
   const numberArraySchema = Joi.array().length(8).items(Joi.number().max(2050).min(0))
   await numberArraySchema.validateAsync(params.metadata.numberArray)
   const numberArray = params.metadata.numberArray.toString()
+
   const query = { passphrase: numberArray }
   const exist = await collection.findOne(query)
   if(exist !== null){
@@ -110,6 +114,18 @@ async function processFirstAddressOrder(paymentInfo, invoiceId, params, client){
   }
   const doc = docInfo
   await collection.insertOne(doc)
+  const chatCollection = client.db("chats").collection("mainChat")
+  const chat = { 
+    chatID: orderInfo.chatID, 
+    messageArray: [
+      { 
+        from: 'dgoon', 
+        message: 'Hi. I will process your order within 24hrs.You can message me here if you have any questions.', 
+        sent: Date.now()
+      }
+    ]
+  }
+  await chatCollection.insertOne(chat)
 }
 async function sanatizeFirstAddressOrderInfo(orderInfo){
   const addressInfoSchema = Joi.object({
@@ -151,9 +167,11 @@ async function sanatizeFirstAddressOrderInfo(orderInfo){
 }
 async function processFirstLockerOrder(paymentInfo, invoiceId, params, client){
   const collection = client.db("accounts").collection("accountInfo")
+
   const numberArraySchema = Joi.array().length(8).items(Joi.number().max(2050).min(0))
   await numberArraySchema.validateAsync(params.metadata.numberArray)
   const numberArray = params.metadata.numberArray.toString()
+
   const query = { passphrase: numberArray }
   const exist = await collection.findOne(query)
   if(exist !== null){
