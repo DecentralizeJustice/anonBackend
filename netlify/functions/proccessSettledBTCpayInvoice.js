@@ -96,7 +96,7 @@ async function processFirstAddressOrder(paymentInfo, invoiceId, params, client){
     nickName: hri.random()
   }
   await sanatizeFirstAddressOrderInfo(orderInfo)
-  const docInfo = { 
+  const docInfo = {
     passphrase: numberArray, 
     metaData: { 
       email: null,
@@ -199,6 +199,18 @@ async function processFirstLockerOrder(paymentInfo, invoiceId, params, client){
   }
   const doc = docInfo
   await collection.insertOne(doc)
+  const chatCollection = client.db("chats").collection("mainChat")
+  const chat = { 
+    chatID: orderInfo.chatID, 
+    messageArray: [
+      { 
+        from: 'dgoon', 
+        message: 'Hi. I will process your order within 24hrs.You can message me here if you have any questions.', 
+        sent: Date.now()
+      }
+    ]
+  }
+  await chatCollection.insertOne(chat)
 }
 async function sanatizeFirstLockerOrderInfo(orderInfo){
   const itemSchema = Joi.object().length(4).keys({
