@@ -127,7 +127,7 @@ async function sanatizeFirstAddressOrderInfo(orderInfo){
   })
   const itemListSchema = Joi.array().required().min(1).max(20).items(itemSchema)
   const objectSchema = Joi.object({
-    chatID: Joi.string().required().hex().max(99999),
+    chatID: Joi.string().required().hex().max(70),
     statusHistory: Joi.array().required().length(1),
     paymentInfo: Joi.array().required(),
     btcPayInvoice: Joi.string().required().alphanum().length(22),
