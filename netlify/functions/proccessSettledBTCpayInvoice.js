@@ -84,6 +84,7 @@ async function processFirstAddressOrder(paymentInfo, invoiceId, params, client){
       city: params.metadata.addressInfo.zipcode,
       streetAddress: params.metadata.addressInfo.streetAddress,
       fullname: params.metadata.addressInfo.fullname,
+      aptNumber: params.metadata.addressInfo.aptNumber
     },
     itemList: params.metadata.itemList,
     extraNotes: params.metadata.extraNotes,
@@ -134,6 +135,7 @@ async function sanatizeFirstAddressOrderInfo(orderInfo){
     city: Joi.string().required().min(0).max(99),
     streetAddress: Joi.string().required().min(0).max(999),
     fullname: Joi.string().required().min(0).max(99),
+    aptNumber: Joi.string().required().min(0).max(999),
   })
   const itemSchema = Joi.object().length(4).keys({
     link: Joi.string().required().min(1).max(99999),
