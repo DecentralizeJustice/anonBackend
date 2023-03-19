@@ -14,7 +14,7 @@ exports.handler = async (event) => {
     try {
       const params = JSON.parse(event.body)
       console.log(params)
-      params.metaData = JSON.parse(Buffer.from(params.info, 'base64').toString())
+      params.metaData = JSON.parse(Buffer.from(params.metaData.info, 'base64').toString())
       const invoiceId = params.invoiceId
       const invoiceIdschema = Joi.string().required().alphanum().min(22).max(22)
       await invoiceIdschema.validateAsync(invoiceId)
