@@ -13,7 +13,7 @@ exports.handler = async (event) => {
   const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 })
     try {
       const params = JSON.parse(event.body)
-      console.log(params)
+      console.log(params.metaData.info)
       params.metaData = JSON.parse(Buffer.from(params.metaData.info, 'base64').toString())
       const invoiceId = params.invoiceId
       const invoiceIdschema = Joi.string().required().alphanum().min(22).max(22)
