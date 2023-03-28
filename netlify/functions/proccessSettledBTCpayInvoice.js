@@ -132,7 +132,7 @@ async function processFirstAddressOrder(paymentInfo, invoiceId, params, client){
 async function sanatizeFirstAddressOrderInfo(orderInfo){
   const addressInfoSchema = Joi.object({
     country: Joi.string().required().min(0).max(99),
-    zipcode: Joi.number().required().min(0).max(999999),
+    zipcode: Joi.required(),
     city: Joi.string().required().min(0).max(99),
     streetAddress: Joi.string().required().min(0).max(999),
     fullname: Joi.string().required().min(0).max(99),
@@ -250,7 +250,7 @@ async function sanatizeFirstLockerOrderInfo(orderInfo){
     btcPayInvoice: Joi.string().required().alphanum().min(1).max(100),
     itemList: itemListSchema,
     country: Joi.string().required().min(0).max(99),
-    lockerZipcode: Joi.number().required().min(0).max(999999),
+    lockerZipcode: Joi.required(),
     lockerName: Joi.string().required().min(0).max(99),
     extraNotes: Joi.string().required().min(0).max(99999),
     type: Joi.string().required().min(0).max(50),
