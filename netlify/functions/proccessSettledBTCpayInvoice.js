@@ -16,7 +16,7 @@ exports.handler = async (event) => {
       console.log(params.metadata)
       params.metadata = JSON.parse(Buffer.from(params.metadata.info, 'base64').toString())
       const invoiceId = params.invoiceId
-      const invoiceIdschema = Joi.string().required().alphanum().min(22).max(22)
+      const invoiceIdschema = Joi.string().required().alphanum().min(1).max(100)
       await invoiceIdschema.validateAsync(invoiceId)
 
       if(params.type !== 'InvoiceSettled'){
@@ -149,7 +149,7 @@ async function sanatizeFirstAddressOrderInfo(orderInfo){
     chatID: Joi.string().required().hex().max(70),
     statusHistory: Joi.array().required().length(1),
     paymentInfo: Joi.array().required(),
-    btcPayInvoice: Joi.string().required().alphanum().length(22),
+    btcPayInvoice: Joi.string().required().alphanum().min(1).max(100),
     addressInfo: addressInfoSchema,
     itemList: itemListSchema,
     extraNotes: Joi.string().required().min(0).max(99999),
@@ -247,7 +247,7 @@ async function sanatizeFirstLockerOrderInfo(orderInfo){
     chatID: Joi.string().required().hex().max(99999),
     statusHistory: Joi.array().required().length(1),
     paymentInfo: Joi.array().required(),
-    btcPayInvoice: Joi.string().required().alphanum().length(22),
+    btcPayInvoice: Joi.string().required().alphanum().min(1).max(100),
     itemList: itemListSchema,
     country: Joi.string().required().min(0).max(99),
     lockerZipcode: Joi.number().required().min(0).max(999999),
