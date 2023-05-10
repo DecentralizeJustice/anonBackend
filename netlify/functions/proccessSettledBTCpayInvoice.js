@@ -232,7 +232,7 @@ async function processFirstLockerOrder(paymentInfo, invoiceId, params, client){
         from: 'dgoon', 
         message: `Hi. I will process your order within 24hrs. You should check on your order
         every other day. We can not issue refunds for items that were failed to be picked up in time.
-        You can message me here if you have any questions. You can check on your order with this link also:`
+        You can message me here if you have any questions. You can check on your order with this link also:<br/>`
          + getCheckOrderLink(numberArray), 
         sent: Date.now()
       }
@@ -275,7 +275,7 @@ async function sanatizeFirstLockerOrderInfo(orderInfo){
 }
 function getCheckOrderLink(numberArray){
   const wordListFinal = numberArrayToWordArray(numberArray)
-  const link = 'https://anonshop.app/checkonorder#' + wordListFinal.join(',')
+  const link = 'https://anonshop.app/login#' + wordListFinal.join(',')
   return link
 }
 function numberArrayToWordArray (numberArray) {
