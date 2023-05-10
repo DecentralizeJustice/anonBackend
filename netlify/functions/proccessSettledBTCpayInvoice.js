@@ -9,6 +9,10 @@ const crypto = require('crypto');
 const hri = require('human-readable-ids').hri
 const uri = "mongodb+srv://main:" + mongoDBPassword + "@"+ mongoServerLocation + "/?retryWrites=true&w=majority"
 const storeAddress = 'https://btcpay.anonshop.app/api/v1/stores/' + BTCpayStore + '/invoices/'
+const fs = require('fs')
+const path = require("path")
+const pathWordlist = path.resolve(__dirname + "/bip39Wordlist.txt")
+const words = fs.readFileSync(pathWordlist, 'utf8').toString().split("\n")
 exports.handler = async (event) => {
   const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 })
     try {
@@ -228,7 +232,8 @@ async function processFirstLockerOrder(paymentInfo, invoiceId, params, client){
         from: 'dgoon', 
         message: `Hi. I will process your order within 24hrs. Yous should check on your order
         every other day. We can not issue refunds for items that were failed to be picked up in time.
-        You can message me here if you have any questions.`, 
+        You can message me here if you have any questions. You can check on your order with this link also:`
+         + getCheckOrderLink(numberArray), 
         sent: Date.now()
       }
     ]
@@ -267,4 +272,19 @@ async function sanatizeFirstLockerOrderInfo(orderInfo){
   })
   await objectSchema.validateAsync(orderInfo)
   return true
+}
+function getCheckOrderLink(numberArray){
+  const wordListFinal = numberArrayToWordArray(numberArray)
+  const link = 'https://anonshop.app/checkonorder#' + wordListFinal.join(',')
+  return link
+}
+function numberArrayToWordArray (numberArray) {
+  const wordArray = []
+  const splitNumberArray = numberArray.split(",")
+  const length = splitNumberArray.length
+  for (var i=0;i<length; i++) {
+    const wordToAdd = words[splitNumberArray[i]]
+    wordArray.push(wordToAdd.replace(/(\r\n|\n|\r)/gm, ""))
+  }
+  return wordArray
 }
