@@ -230,7 +230,7 @@ async function processFirstLockerOrder(paymentInfo, invoiceId, params, client){
     messageArray: [
       { 
         from: 'dgoon', 
-        message: `Hi. I will process your order within 24hrs. Yous should check on your order
+        message: `Hi. I will process your order within 24hrs. You should check on your order
         every other day. We can not issue refunds for items that were failed to be picked up in time.
         You can message me here if you have any questions. You can check on your order with this link also:`
          + getCheckOrderLink(numberArray), 
