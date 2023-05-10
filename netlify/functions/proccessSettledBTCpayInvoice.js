@@ -278,7 +278,7 @@ async function sanatizeFirstLockerOrderInfo(orderInfo){
 }
 function getCheckOrderLink(numberArray){
   const wordListFinal = numberArrayToWordArray(numberArray)
-  const link = 'https://www.anonshop.anonindustries.com/login#' + wordListFinal.join(',')
+  const link = 'https://anonshop.anonindustries.com/login#' + wordListFinal.join(',')
   return link
 }
 function numberArrayToWordArray (numberArray) {
