@@ -267,7 +267,7 @@ async function sanatizeFirstLockerOrderInfo(orderInfo){
     itemsSubtotal: Joi.number().required().min(0).max(99999),
     bondUSD: Joi.number().required().min(0).max(99999),
     orderFeeUSD: Joi.number().required().min(0).max(99999),
-    extraAmountUSD: Joi.number().required().min(0).max(99999),
+    extraAmountUSD: Joi.alternatives().try(Joi.string().min(0).max(99999), Joi.number().min(0).max(99999)).required()
     refundAddress: Joi.string().required().alphanum().min(1).max(110),
     discountPercent: Joi.number().required().min(0).max(100),
     discountPossible: Joi.boolean().required(),
