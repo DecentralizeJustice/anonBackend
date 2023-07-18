@@ -86,7 +86,7 @@ async function processFirstAddressOrder(paymentInfo, invoiceId, params, client){
     addressInfo: {
       country: params.metadata.addressInfo.country,
       zipcode: params.metadata.addressInfo.zipcode,
-      city: params.metadata.addressInfo.zipcode,
+      city: params.metadata.addressInfo.city,
       streetAddress: params.metadata.addressInfo.streetAddress,
       fullname: params.metadata.addressInfo.fullname,
       aptNumber: params.metadata.addressInfo.aptNumber
