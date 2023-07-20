@@ -259,7 +259,7 @@ async function sanatizeFirstLockerOrderInfo(orderInfo){
     itemList: itemListSchema,
     country: Joi.string().required().min(0).max(99),
     lockerZipcode: Joi.alternatives().try(Joi.string().min(0).max(99999), Joi.number().min(0).max(99999)).required(),
-    lockerName: Joi.string().required().min(0).max(99),
+    lockerName: Joi.string().required().min(0).max(999),
     extraNotes: Joi.string().required().min(0).max(99999),
     type: Joi.string().required().min(0).max(50),
     totalUSD: Joi.number().required().min(0).max(99999),
