@@ -126,7 +126,7 @@ async function processFirstAddressOrder(paymentInfo, invoiceId, params, client){
     messageArray: [
       { 
         from: 'dgoon', 
-        message: `Hi. I will process your order within 24hrs.You can message me here if you have any questions.
+        message: `Hi. I will process your order soon. I am for 24 hrs, but during high volume times this might be delayed. You can message me here if you have any questions.
         You can check on your order with this link also: <br/>`
          + getCheckOrderLink(numberArray), 
         sent: Date.now()
@@ -232,7 +232,7 @@ async function processFirstLockerOrder(paymentInfo, invoiceId, params, client){
     messageArray: [
       { 
         from: 'dgoon', 
-        message: `Hi. I will process your order within 24hrs. You should check on your order
+        message: `Hi. I will try to process your order within 24 hours, but during times of high volume, this time might be delayed. You should check on your order
         every 24 hours. We can not issue refunds for items that were not picked up in time.
         You can message me here if you have any questions. 
         You can check on your order with this link also: <br/>`
