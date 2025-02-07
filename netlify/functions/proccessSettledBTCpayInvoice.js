@@ -150,7 +150,7 @@ async function sanatizeFirstAddressOrderInfo(orderInfo){
     cost:Joi.number().required().min(0).max(99999),
     quantity:Joi.number().required().min(0).max(99999),
   })
-  const itemListSchema = Joi.array().required().min(1).max(20).items(itemSchema)
+  const itemListSchema = Joi.array().required().min(1).max(50).items(itemSchema)
   const objectSchema = Joi.object({
     chatID: Joi.string().required().hex().max(70),
     statusHistory: Joi.array().required().length(1),
@@ -250,7 +250,7 @@ async function sanatizeFirstLockerOrderInfo(orderInfo){
     cost:Joi.number().required().min(0).max(99999),
     quantity:Joi.number().required().min(0).max(99999),
   })
-  const itemListSchema = Joi.array().required().min(1).max(20).items(itemSchema)
+  const itemListSchema = Joi.array().required().min(1).max(50).items(itemSchema)
   const objectSchema = Joi.object({
     chatID: Joi.string().required().hex().max(99999),
     statusHistory: Joi.array().required().length(1),
